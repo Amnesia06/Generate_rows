@@ -240,7 +240,7 @@ def animate_robot(n, exit_choice):
     ax.set_aspect('equal')
     ax.grid(True, linestyle=':', alpha=0.7)
     
-    title = f'Farming Robot: {n+2} columns - Exit: {corner_names[exit_choice]}\nBrown=Unsown, Green=Sown(No-Go Zone)'
+    title = f'Farming Robot: {n+2} columns - Exit: {corner_names[exit_choice]}'
     ax.set_title(title, fontsize=14, pad=20)
     
     square = Rectangle((0, 0), n+1, n+1, fill=False, edgecolor='navy', linewidth=3, zorder=1)
@@ -268,9 +268,14 @@ def animate_robot(n, exit_choice):
             ax.text(x+0.5, y+0.2, f'EXIT({x},{y})', fontsize=9, ha='left', va='bottom', 
                    color='red', weight='bold', zorder=6)
     
-    ax.text(0.02, 0.98, 'Legend:\n🟤 Unsown Areas\n🟢 Sown Areas (No-Go)\n🟠 Farming Robot', 
-            transform=ax.transAxes, fontsize=10, va='top', ha='left',
-            bbox=dict(boxstyle='round', facecolor='white', alpha=0.8))
+    from matplotlib.lines import Line2D
+    legend_elements = [
+        Line2D([0], [0], color='#8B4513', lw=6, label='Unsown Areas'),
+        Line2D([0], [0], color='#228B22', lw=6, label='Sown Areas'),
+        Circle((0,0), radius=0.35, color='orange', ec='black', label='Robot')
+    ]
+    ax.legend(handles=legend_elements, loc='upper left', bbox_to_anchor=(0.02, 0.98),
+            framealpha=0.9, fontsize=10)
     
     side_length = n + 1
     corners = [(0, 0), (side_length, 0), (0, side_length), (side_length, side_length)]
@@ -324,8 +329,7 @@ def animate_robot(n, exit_choice):
         
         return sown_path, robot
     
-    ani = FuncAnimation(fig, update, frames=len(smooth_x), init_func=init, blit=True, interval=50)
-    
+    ani = FuncAnimation(fig, update, frames=len(smooth_x), init_func=init, blit=True, interval=50, repeat=False)
     print(f"\nPath Summary:")
     print(f"Total waypoints: {len(path)}")
     print(f"Start: {path[0]}")
